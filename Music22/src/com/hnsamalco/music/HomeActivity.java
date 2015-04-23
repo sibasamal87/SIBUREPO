@@ -140,8 +140,6 @@ public class HomeActivity extends FragmentActivity implements SongsListner{
 			}
 		});
 		
-		System.out.println("inside activity::");
-		
 	}
 	
 	
