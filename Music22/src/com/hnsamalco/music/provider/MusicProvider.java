@@ -263,9 +263,10 @@ public class MusicProvider {
 				MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST };
 
 		String orderBy = android.provider.MediaStore.Audio.Media._ID;
+		String selection = MediaStore.Audio.Media.IS_MUSIC + "!=0";
 
 		Cursor cursor = activity.getContentResolver().query(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, column, null,
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, column, selection,
 				null, orderBy);
 
 		
