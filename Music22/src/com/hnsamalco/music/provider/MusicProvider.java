@@ -255,22 +255,19 @@ public class MusicProvider {
 	@SuppressWarnings("unused")
 	public Cursor getAllSong() {
 
-		String[] column = { MediaStore.Audio.Media.ALBUM_ID,
-				MediaStore.Audio.Media.DATA, MediaStore.Audio.Media._ID,
-				MediaStore.Audio.Media.TITLE,
-				MediaStore.Audio.Media.DISPLAY_NAME,
-				MediaStore.Audio.Media.MIME_TYPE,
-				MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST };
+        String[] column = { MediaStore.Audio.Media.ALBUM_ID,
+                MediaStore.Audio.Media.DATA, MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.DISPLAY_NAME,
+                MediaStore.Audio.Media.MIME_TYPE,
+                MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST };
 
-		String orderBy = android.provider.MediaStore.Audio.Media._ID;
-		String selection = MediaStore.Audio.Media.IS_MUSIC + "!=0";
-
-		Cursor cursor = activity.getContentResolver().query(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, column, selection,
-				null, orderBy);
-
-		
-		return cursor;
+        String orderBy = android.provider.MediaStore.Audio.Media._ID;
+        String selection = MediaStore.Audio.Media.IS_MUSIC + "!=0";
+        Cursor cursor = activity.getContentResolver().query(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, column, selection,
+                null, orderBy);
+        return cursor;
 
 	}
 
