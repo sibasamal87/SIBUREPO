@@ -63,6 +63,7 @@ public class HomeActivity extends FragmentActivity implements SongsListner{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 		
+		//drawer menu labels
 		menulist.add("Listen Now");
 		menulist.add("My Library");
 		menulist.add("PlayLists");
@@ -74,7 +75,7 @@ public class HomeActivity extends FragmentActivity implements SongsListner{
         drawerArrowDrawable.setStrokeColor(getResources().getColor(R.color.light_gray));
         appImage.setImageDrawable(drawerArrowDrawable);
 
-        // Set the adapter for the list view
+        // Set the adapter for the drawer list view
         mDrawerList.setAdapter(new DrawerMenuAdapter(this, R.layout.drawer_menu_list,menulist));
         mDrawerList.setOnItemClickListener(new OnItemClickListener() {
 
@@ -86,6 +87,7 @@ public class HomeActivity extends FragmentActivity implements SongsListner{
 			}
 		});
         
+        //DrawerMenu toggle for open and close listner
         menuToggle = new DrwaerMenuToggle(this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
                 R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
@@ -97,6 +99,7 @@ public class HomeActivity extends FragmentActivity implements SongsListner{
         getActionBar().setHomeButtonEnabled(true);
         actionBartitle = (TextView) findViewById(android.R.id.text1);
         
+        //set first item as selected in drawer menu
         menuListItemCheck(0);
         
         boolean actionBarHidden = savedInstanceState != null && savedInstanceState.getBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, false);
