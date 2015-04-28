@@ -26,134 +26,116 @@ import com.hnsamalco.music.data.SongDetails;
 import com.hnsamalco.music.provider.MusicProvider;
 
 public class MusicListFragment extends Fragment{
-	String TAG="Music";
-	private View view;
-	private GridView gridAlbum;
-	private SongsListner songsListner;
-	private MusicProvider provider;
-	private Cursor albumsCursor;
-	private static final int LOADALBUM=101;
-	private AlbumDetails albumDetailUpadtae;
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		
-		view = inflater.inflate(R.layout.music_list_fragment, container,false);
-		gridAlbum =(GridView) view.findViewById(R.id.gridAlbum);
-		gridAlbum.setOnItemClickListener(new GridAlbumItemClick());
-		songsListner = (SongsListner)getActivity();
-		provider = new MusicProvider(getActivity());
-		
-		return view;
-	}
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onActivityCreated(savedInstanceState);
-		
-		Thread thrdAlbums = new Thread(){
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				albumsCursor=provider.getAllAlbum();
-				Message msg = new Message();
-				msg.what=LOADALBUM;
-				handler.sendMessage(msg);
-			}
-		};
-		
-		thrdAlbums.start();
-		
-	}
-	
-	Handler handler = new Handler() {
+    String TAG="MusicListFragment";
+    private View view;
+    private GridView gridAlbum;
+    private SongsListner songsListner;
+    private MusicProvider provider;
+    private Cursor albumsCursor;
+    private static final int LOADALBUM=101;
+    private AlbumDetails albumDetailUpadtae;
 
-		public void handleMessage(android.os.Message msg) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+             Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.music_list_fragment, container,false);
+        gridAlbum =(GridView) view.findViewById(R.id.gridAlbum);
+        gridAlbum.setOnItemClickListener(new GridAlbumItemClick());
+        songsListner = (SongsListner)getActivity();
+        provider = new MusicProvider(getActivity());
+        return view;
+    }
 
-			switch (msg.what) {
-			case LOADALBUM:
-				gridAlbum.setAdapter(new AlbumListAdapter(getActivity(),albumsCursor,
-						R.layout.album_grid_item));
-				
-				getAllSongByAlbumId(0, getAlbum(0).getId());
-				songsListner.onSongsSelected(albumDetailUpadtae, 0);
-				
-				break;
-			}
-		};
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Thread thrdAlbums = new Thread(){
+            @Override
+            public void run() {
+                albumsCursor=provider.getAllAlbum();
+                Message msg = new Message();
+                msg.what=LOADALBUM;
+                handler.sendMessage(msg);
+           }
+        };
+        thrdAlbums.start();
+    }
 
-	};
-	
-	
-	private AlbumDetails getAlbum(int position){
-		albumDetailUpadtae = new AlbumDetails();
-		
-		System.out.println("albumsCursoralbumsCursoralbumsCursoralbumsCursoralbumsCursor::"+albumsCursor.getCount());
-		if (albumsCursor != null) {
-			if (albumsCursor.moveToPosition(position)) {
-				
-				System.out.println("insideeeeee valueeee");
-					String album_id = albumsCursor.getString(albumsCursor
-							.getColumnIndex(Albums._ID));
+    Handler handler = new Handler() {
 
-					String album_name = albumsCursor.getString(albumsCursor
-							.getColumnIndex(Albums.ALBUM));
+        public void handleMessage(android.os.Message msg) {
 
-					String album_artist = albumsCursor.getString(albumsCursor
-							.getColumnIndex(Albums.ARTIST));
+            switch (msg.what) {
+             case LOADALBUM:
+                gridAlbum.setAdapter(new AlbumListAdapter(getActivity(),albumsCursor,
+                        R.layout.album_grid_item));
+                getAllSongByAlbumId(0, getAlbum(0).getId());
+                songsListner.onSongsSelected(albumDetailUpadtae, 0);
+                break;
+            }
+       };
 
-					String album_cover_image = albumsCursor
-							.getString(albumsCursor
-									.getColumnIndex(Albums.ALBUM_ART));
-					
-//					int first_year = albumsCursor
-//							.getInt(albumsCursor
-//									.getColumnIndex(Albums.FIRST_YEAR));
-//					
-//					int last_year = albumsCursor
-//							.getInt(albumsCursor
-//									.getColumnIndex(Albums.LAST_YEAR));
+    };
 
-					int album_no_of_songs = albumsCursor.getInt(albumsCursor
-							.getColumnIndex(Albums.NUMBER_OF_SONGS));
+    private AlbumDetails getAlbum(int position){
+        albumDetailUpadtae = new AlbumDetails();
+        System.out.println("albumsCursoralbumsCursoralbumsCursoralbumsCursoralbumsCursor::"+albumsCursor.getCount());
+        if (albumsCursor != null) {
+            if (albumsCursor.moveToPosition(position)) {
+                    System.out.println("insideeeeee valueeee");
+                    String album_id = albumsCursor.getString(albumsCursor
+                          .getColumnIndex(Albums._ID));
 
-					if (album_cover_image == null) {
-						album_cover_image = MusicProvider.sAssetsArtImage;
-					}
+                    String album_name = albumsCursor.getString(albumsCursor
+                          .getColumnIndex(Albums.ALBUM));
 
-					albumDetailUpadtae.setId(Integer.parseInt(album_id));
-					albumDetailUpadtae.setAlbumArtist(album_artist);
-					albumDetailUpadtae.setAlbumName(album_name);
-					albumDetailUpadtae.setCoverImagePath(album_cover_image);
-					albumDetailUpadtae.setNoOfSong(album_no_of_songs);
-//					albumDetailUpadtae.setFirstYear(first_year+"");
-//					albumDetailUpadtae.setLastYear(last_year+"");
-					
-				}
+                    String album_artist = albumsCursor.getString(albumsCursor
+                          .getColumnIndex(Albums.ARTIST));
 
-			}
-		
-		albumsCursor.moveToFirst();
-		
-		return albumDetailUpadtae;
-	}
-	
-	
-	private class GridAlbumItemClick implements OnItemClickListener{
-		@Override
-		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
-				long arg3) {
-			
-			getAlbum(position);
-			getAllSongByAlbumId(position,albumDetailUpadtae.getId());
-			songsListner.onSongsSelected(albumDetailUpadtae, position);
-			showDialog(albumDetailUpadtae);
-		}
-	}
-	
-	void showDialog(AlbumDetails albumDetailUpadtae) {
+                    String album_cover_image = albumsCursor
+                          .getString(albumsCursor
+                                     .getColumnIndex(Albums.ALBUM_ART));
+//                  int first_year = albumsCursor
+//                          .getInt(albumsCursor
+//                                   .getColumnIndex(Albums.FIRST_YEAR));
+//
+//                  int last_year = albumsCursor
+//                          .getInt(albumsCursor
+//                                    .getColumnIndex(Albums.LAST_YEAR));
+
+                    int album_no_of_songs = albumsCursor.getInt(albumsCursor
+                             .getColumnIndex(Albums.NUMBER_OF_SONGS));
+
+                    if (album_cover_image == null) {
+                        album_cover_image = MusicProvider.sAssetsArtImage;
+                    }
+                    albumDetailUpadtae.setId(Integer.parseInt(album_id));
+                    albumDetailUpadtae.setAlbumArtist(album_artist);
+                    albumDetailUpadtae.setAlbumName(album_name);
+                    albumDetailUpadtae.setCoverImagePath(album_cover_image);
+                    albumDetailUpadtae.setNoOfSong(album_no_of_songs);
+//                  albumDetailUpadtae.setFirstYear(first_year+"");
+//                  albumDetailUpadtae.setLastYear(last_year+"");
+            }
+
+        }
+
+        albumsCursor.moveToFirst();
+        return albumDetailUpadtae;
+    }
+
+    private class GridAlbumItemClick implements OnItemClickListener{
+        @Override
+        public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+            long arg3) {
+            getAlbum(position);
+            getAllSongByAlbumId(position,albumDetailUpadtae.getId());
+            songsListner.onSongsSelected(albumDetailUpadtae, position);
+            showDialog(albumDetailUpadtae);
+        }
+    }
+
+    void showDialog(AlbumDetails albumDetailUpadtae) {
 
 	    // DialogFragment.show() will take care of adding the fragment
 	    // in a transaction.  We also want to remove any currently showing
@@ -173,13 +155,13 @@ public class MusicListFragment extends Fragment{
 	    newFragment.setArguments(albumBundle);
 	    
 	    newFragment.show(ft, "dialog");
-	}
-	
-	private void getAllSongByAlbumId(int position,int albumId){
-		
-		ArrayList<SongDetails> songsAlbumList = new ArrayList<SongDetails>();
-		
-		String[] column = { MediaStore.Audio.Media.DATA,
+    }
+
+    private void getAllSongByAlbumId(int position,int albumId){
+
+        ArrayList<SongDetails> songsAlbumList = new ArrayList<SongDetails>();
+
+        String[] column = { MediaStore.Audio.Media.DATA,
                 MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.DISPLAY_NAME,
                 MediaStore.Audio.Media.MIME_TYPE,MediaStore.Audio.Media.DURATION,MediaStore.Audio.Media.ARTIST };
@@ -197,10 +179,10 @@ public class MusicListFragment extends Fragment{
             do {
             	SongDetails details = new SongDetails();
             	
-                Log.v("Sibu",
+                Log.v(TAG,
                         cursor.getString(cursor
                                 .getColumnIndex(MediaStore.Audio.Media.DURATION)));
-                
+
                 details.setAlbumId(albumId);
                 details.setId(cursor.getInt(cursor
                                 .getColumnIndex(MediaStore.Audio.Media._ID)));
@@ -214,17 +196,17 @@ public class MusicListFragment extends Fragment{
                                 .getColumnIndex(MediaStore.Audio.Media.DATA)));
                 details.setArtist(cursor.getString(cursor
                         .getColumnIndex(MediaStore.Audio.Media.ARTIST)));
-                
+
 //                details.setYear(cursor.getString(cursor
 //                        .getColumnIndex(MediaStore.Audio.Media.YEAR)));
-                
+
                 songsAlbumList.add(details);
                 
             } while (cursor.moveToNext());
         }
-        
+
         albumDetailUpadtae.setSongs(songsAlbumList);
-		
-	}
-	
+
+    }
+
 }
